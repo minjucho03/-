@@ -1,0 +1,746 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUNNY | 사이의 보관소</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --cyan: #31e6ff;
+  --gray: #a9a9a9;
+  --black: #211f20;
+  --lime: #eff669;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--black);
+  font-family: "Space Grotesk", "Noto Sans KR", sans-serif;
+
+  background:
+    radial-gradient(
+      ellipse 75% 58% at 78% 22%,
+      rgba(49,230,255,.92) 0%,
+      rgba(49,230,255,.45) 55%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 12% 85%,
+      rgba(49,230,255,.7) 0%,
+      transparent 100%
+    ),
+    linear-gradient(
+      135deg,
+      #a9a9a9 0%,
+      #a7c4c9 52%,
+      #31e6ff 100%
+    );
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
+.mono {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: .04em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ================= HEADER ================= */
+
+.header {
+  height: 62px;
+  padding: 0 5%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  border-bottom: 1px solid var(--black);
+}
+
+.header a {
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity .3s;
+}
+
+.header a:hover {
+  opacity: .5;
+}
+
+.header a:nth-child(2) {
+  text-align: center;
+}
+
+.header a:nth-child(3) {
+  text-align: right;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+  min-height: 680px;
+  position: relative;
+  padding: 30px 5% 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 4;
+}
+
+.hero-index {
+  line-height: 1.8;
+}
+
+/* SUN — 기존 크기 유지 */
+
+.sun-graphic {
+  position: absolute;
+  width: min(53vw, 710px);
+  height: min(53vw, 710px);
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--lime);
+  border: 1px solid var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.sun-inner {
+  width: 70%;
+  height: 70%;
+  animation: sunRotate 26s linear infinite;
+}
+
+.sun-inner svg {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes sunRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* MAIN TYPOGRAPHY */
+
+.hero-center {
+  position: relative;
+  z-index: 2;
+  margin-top: 145px;
+  width: 100%;
+  text-align: left;
+  pointer-events: none;
+}
+
+.result-label {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 6px 12px;
+  border: 1px solid var(--black);
+  font-size: 11px;
+  font-family: "DM Mono", monospace;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(58px, 9vw, 132px);
+  font-weight: 700;
+  letter-spacing: -.085em;
+  line-height: .98;
+  color: var(--black);
+}
+
+.hero-title span {
+  display: block;
+  margin-top: 7px;
+  color: var(--white);
+  -webkit-text-stroke: 1.5px var(--black);
+  paint-order: stroke fill;
+}
+
+.hero-bottom {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 30px;
+  margin-top: 100px;
+}
+
+.hero-description {
+  font-size: 13px;
+  max-width: 400px;
+  line-height: 1.9;
+  word-break: keep-all;
+}
+
+.scroll-label {
+  text-align: right;
+  line-height: 1.8;
+}
+
+/* 메인 홈페이지와 연결되는 모서리 그래픽 */
+
+.corner-left,
+.corner-right {
+  position: absolute;
+  bottom: -100px;
+  width: 220px;
+  height: 220px;
+  border-top: 24px solid rgba(0,190,235,.55);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.corner-left {
+  left: -150px;
+}
+
+.corner-right {
+  right: -150px;
+  transform: rotate(-45deg);
+}
+
+/* ================= TICKER ================= */
+
+.ticker {
+  background: var(--cyan);
+  overflow: hidden;
+  border-top: 1px solid var(--black);
+  border-bottom: 1px solid var(--black);
+  padding: 12px 0;
+}
+
+.ticker-track {
+  display: flex;
+  gap: 50px;
+  width: max-content;
+  animation: tickerMove 22s linear infinite;
+}
+
+.ticker-track span {
+  font-size: clamp(17px, 2.5vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  white-space: nowrap;
+}
+
+@keyframes tickerMove {
+  to { transform: translateX(-50%); }
+}
+
+/* ================= COMMON ================= */
+
+.section {
+  padding: 35px 5% 55px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--black);
+  padding-bottom: 12px;
+}
+
+/* ================= DEFINITION ================= */
+
+.definition {
+  display: grid;
+  grid-template-columns: 28% 1fr;
+  gap: 5%;
+  padding-top: 35px;
+}
+
+.definition-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.definition-symbol {
+  font-size: 54px;
+  font-weight: 700;
+  letter-spacing: -.07em;
+  line-height: 1;
+}
+
+.definition-title {
+  font-size: clamp(22px, 2.6vw, 36px);
+  line-height: 1.35;
+  letter-spacing: -.045em;
+  margin: 0 0 22px;
+  font-weight: 700;
+  word-break: keep-all;
+}
+
+.definition-text {
+  font-size: 13px;
+  line-height: 1.95;
+  max-width: 650px;
+  word-break: keep-all;
+  margin: 0;
+}
+
+.definition-end {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid var(--black);
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+/* ================= MESSAGE ================= */
+
+.message-section {
+  padding-top: 30px;
+  padding-bottom: 55px;
+}
+
+.message-layout {
+  display: grid;
+  grid-template-columns: 28% 1fr;
+  gap: 5%;
+  padding-top: 35px;
+}
+
+.message-left {
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.message-text {
+  margin: 0;
+  max-width: 780px;
+  font-size: clamp(22px, 2.8vw, 38px);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -.045em;
+  word-break: keep-all;
+}
+
+.message-text .accent {
+  color: var(--white);
+  text-shadow:
+    -1px -1px 0 var(--black),
+     1px -1px 0 var(--black),
+    -1px  1px 0 var(--black),
+     1px  1px 0 var(--black);
+}
+
+.message-english {
+  margin-top: 28px;
+  line-height: 1.8;
+}
+
+/* ================= RECORD ================= */
+
+.record {
+  background: var(--cyan);
+  border-top: 1px solid var(--black);
+  padding: 30px 5% 45px;
+}
+
+.record-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.record-item {
+  border-top: 1px solid var(--black);
+  padding-top: 12px;
+}
+
+.record-value {
+  font-size: clamp(17px, 2vw, 27px);
+  font-weight: 600;
+  margin: 18px 0 12px;
+  letter-spacing: -.04em;
+}
+
+.record-note {
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+  background: var(--cyan);
+  padding: 18px 5% 25px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--black);
+  gap: 20px;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+  .header {
+    height: 52px;
+  }
+
+  .header a {
+    font-size: 11px;
+  }
+
+  .hero {
+    min-height: 610px;
+  }
+
+  .sun-graphic {
+    width: 90vw;
+    height: 90vw;
+    top: 40%;
+  }
+
+  .hero-center {
+    margin-top: 210px;
+  }
+
+  .hero-title {
+    font-size: clamp(55px, 14vw, 90px);
+  }
+
+  .hero-bottom {
+    margin-top: 55px;
+  }
+
+  .hero-description {
+    font-size: 11px;
+  }
+
+  .definition,
+  .message-layout {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .definition-symbol {
+    font-size: 40px;
+  }
+
+  .definition-title {
+    font-size: 25px;
+  }
+
+  .message-text {
+    font-size: 24px;
+  }
+
+  .record-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .footer {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sun-inner,
+  .ticker-track {
+    animation: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<header class="header">
+  <a href="#" aria-label="Generation">GENERATION</a>
+  <a href="#" aria-current="page">RESULT</a>
+  <a href="#" aria-label="Space">SPACE</a>
+</header>
+
+<main>
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="hero-top mono">
+
+    <div class="hero-index">
+      WEATHER BETWEEN US<br>
+      PERSONAL RESULT / 001
+    </div>
+
+    <div class="hero-index" style="text-align:right;">
+      37°33'58.87"N<br>
+      126°58'40.63"E
+    </div>
+
+  </div>
+
+  <div class="sun-graphic">
+    <div class="sun-inner">
+
+      <svg viewBox="0 0 500 500" fill="none">
+        <circle cx="250" cy="250" r="100"
+          stroke="#211f20" stroke-width="10"/>
+
+        <g stroke="#211f20" stroke-width="10">
+          <path d="M250 0V120"/>
+          <path d="M250 380V500"/>
+          <path d="M0 250H120"/>
+          <path d="M380 250H500"/>
+          <path d="M73 73L159 159"/>
+          <path d="M341 341L427 427"/>
+          <path d="M427 73L341 159"/>
+          <path d="M159 341L73 427"/>
+        </g>
+      </svg>
+
+    </div>
+  </div>
+
+  <div class="hero-center">
+
+    <div class="result-label">
+      01 / CLEAR
+    </div>
+
+    <h1 class="hero-title">
+      SUNNY
+      <span>맑음</span>
+    </h1>
+
+  </div>
+
+  <div class="hero-bottom">
+
+    <div class="hero-description">
+      서로를 있는 그대로 바라보는 관계.<br>
+      가까워지기 위해 경계를 없애는 것이 아니라,
+      서로의 경계를 바라보면서도
+      그 사이에 머무를 수 있습니다.
+    </div>
+
+    <div class="scroll-label mono">
+      EXPLORE THE RESULT<br>
+      SCROLL ↓
+    </div>
+
+  </div>
+
+  <div class="corner-left"></div>
+  <div class="corner-right"></div>
+
+</section>
+
+<!-- MOVING TEXT -->
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span>
+      WEATHER BETWEEN US ✳ SUNNY ✳ CLEAR ✳
+    </span>
+    <span>
+      WEATHER BETWEEN US ✳ SUNNY ✳ CLEAR ✳
+    </span>
+  </div>
+</div>
+
+<!-- DEFINITION -->
+
+<section class="section">
+
+  <div class="section-heading mono">
+    <span>01 / DEFINITION</span>
+    <span>ABOUT SUNNY</span>
+  </div>
+
+  <div class="definition">
+
+    <div class="definition-left">
+      <div class="definition-symbol">01 ↗</div>
+
+      <div class="mono">
+        WEATHER TYPE<br>
+        CLEAR / SUNNY
+      </div>
+    </div>
+
+    <div class="definition-right">
+
+      <h2 class="definition-title">
+        맑음은 아무런 구름이<br>
+        없는 상태일까?
+      </h2>
+
+      <p class="definition-text">
+        맑음은 모든 불안과 갈등이 사라진 상태를
+        의미하지 않습니다. 서로 다른 생각과 감정이
+        존재하더라도, 그것을 가리지 않고 바라볼 수
+        있는 순간에 우리는 맑음을 경험합니다.
+        <br><br>
+        누군가를 이해한다는 것은 같은 날씨가 되는
+        일이 아닙니다. 서로의 온도와 속도가 다르다는
+        사실을 인정하면서도 그 사이에 머무르는 일입니다.
+        맑은 날씨는 서로를 바라보려는 작은 태도에서
+        시작됩니다.
+      </p>
+
+      <div class="definition-end mono">
+        <span>VISIBILITY / CONNECTION</span>
+        <span>WEATHER 01 — 04</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- MESSAGE -->
+
+<section class="section message-section">
+
+  <div class="section-heading mono">
+    <span>02 / BETWEEN US</span>
+    <span>A MOMENT OF UNDERSTANDING</span>
+  </div>
+
+  <div class="message-layout">
+
+    <div class="message-left mono">
+      FROM ONE WEATHER<br>
+      TO ANOTHER
+    </div>
+
+    <div>
+
+      <h2 class="message-text">
+        우리는 서로의 날씨를<br>
+        모두 알 수 없지만,<br>
+        <span class="accent">
+          잠시 멈춰 바라보는 순간
+        </span><br>
+        이해는 시작됩니다.
+      </h2>
+
+      <div class="message-english mono">
+        WE MAY NOT KNOW EACH OTHER'S WEATHER.<br>
+        BUT UNDERSTANDING BEGINS WHEN WE PAUSE TO LOOK.
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- RECORD -->
+
+<section class="record">
+
+  <div class="section-heading mono">
+    <span>03 / RECORD</span>
+    <span>PERSONAL WEATHER ARCHIVE</span>
+  </div>
+
+  <div class="record-grid">
+
+    <div class="record-item">
+      <span class="mono">WEATHER / 01</span>
+      <div class="record-value">SUNNY — 맑음</div>
+      <div class="record-note">
+        서로의 다름을 바라볼 수 있는 날씨
+      </div>
+    </div>
+
+    <div class="record-item">
+      <span class="mono">DATE / LOCAL TIME</span>
+      <div class="record-value" id="current-date">--.--.--</div>
+      <div class="record-note mono" id="current-time">
+        --:--:-- KST
+      </div>
+    </div>
+
+    <div class="record-item">
+      <span class="mono">REFERENCE / LOCATION</span>
+      <div class="record-value">SEOUL, KR</div>
+      <div class="record-note mono">
+        37°33'58.87"N / 126°58'40.63"E
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer class="footer mono">
+  <span>사이의 보관소 / WEATHER BETWEEN US</span>
+  <span>RESULT — 001</span>
+</footer>
+
+<script>
+function updateClock() {
+  const now = new Date();
+
+  const date = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(now);
+
+  const time = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Seoul",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  }).format(now);
+
+  document.getElementById("current-date").textContent = date;
+  document.getElementById("current-time").textContent = time + " KST";
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>

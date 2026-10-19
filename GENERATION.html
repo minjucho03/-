@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/style.scss">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100..900&family=Noto+Sans+TC:wght@100..900&family=Oi&display=swap" rel="stylesheet">
+  <title>GENERATION - CONSENSUAL</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* ==========================================
+       1. 서체 및 기본 스타일
+       ========================================== */
+    @font-face {
+      font-family: 'pretendard';
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Anthony', 'Pretendard', sans-serif;
+    }
+
+    body {
+      background-color: #c8cecf;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      transition: background-color 1.2s ease-in-out, background 1.2s ease-in-out;
+    }
+
+    .header-logo {
+      position: fixed;
+      top: 36px;
+      left: 40px;
+      z-index: 100;
+    }
+
+    .header-logo a {
+      font-family: 'Pretendard';
+      font-size: 1.25rem;
+      letter-spacing: 3px;
+      color: #000;
+      text-decoration: none;
+      text-transform: uppercase;
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+
+    .header-logo a:hover {
+      opacity: 1;
+    }
+
+    .geometry-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      transition: transform 0.15s ease-out;
+    }
+
+    .halftone-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 3;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(0, 40, 60, 0.25) 2.5px, transparent 2.5px);
+      background-size: 18px 18px;
+      mix-blend-mode: multiply;
+      opacity: 0.55;
+    }
+
+    .motion-bg-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2;
+      pointer-events: none;
+      transition: transform 0.2s ease-out;
+      display: none;
+    }
+
+    .cloud-blob {
+      position: absolute;
+      background: #ffffff;
+      opacity: 0.85;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.05);
+      animation: dynamicAmoeba 12s ease-in-out infinite alternate;
+    }
+
+    .blob-1 {
+      width: 420px; height: 380px; top: 5%; left: 8%;
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      animation-duration: 10s;
+    }
+
+    .blob-2 {
+      width: 520px; height: 480px; bottom: -5%; right: 5%;
+      border-radius: 60% 40% 30% 70% / 50% 30% 70% 50%;
+      animation-duration: 14s; animation-delay: -3s;
+    }
+
+    /* STEP 0 Canvas Layer */
+    #interactive-canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 5;
+    }
+
+    #mixCanvas {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    #mixCanvas:active {
+      cursor: grabbing;
+    }
+
+    .step-0-ui {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(20, 25, 30, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 24px 36px;
+      border-radius: 30px;
+      border: 1px solid rgba(108, 243, 245, 0.4);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 90%;
+      width: 460px;
+    }
+
+    .step-0-title {
+      font-size: 1.5rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+
+    .step-0-desc {
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      font-weight: 300;
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+
+    .mix-indicator {
+      font-size: 0.8rem;
+      margin-bottom: 15px;
+      color: #e0f7fa;
+      letter-spacing: 1px;
+    }
+
+    /* UI 컨테이너 */
+    .generation-container {
+      width: 100%;
+      max-width: 580px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .step-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(211, 209, 209, 0.25);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 28px;
+      padding: 45px 35px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .step-box.active {
+      display: flex;
+    }
+
+    .step-num {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 6px;
+    }
+
+    .step-title {
+      font-size: 1.25rem;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .step-sub {
+      font-size: 0.88rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+      text-align: center;
+      line-height: 1.6;
+      word-break: keep-all;
+      font-weight: 300;
+    }
+
+    /* 선택형 버튼 및 카드 UI */
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 28px;
+    }
+
+    .weather-btn {
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .weather-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: #fff;
+    }
+
+    .weather-btn.selected {
+      border: 2px solid #fff;
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      width: 100%;
+      margin-bottom: 28px;
+    }
+
+    .color-option {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .color-option:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .color-option.selected {
+      border: 2px solid #fff;
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    .color-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .color-label {
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+
+    .box-gray { background-color: #d1d5db; }
+    .box-orange { background-color: #f97316; }
+    .box-blue { background-color: #818cf8; }
+    .box-yellow { background-color: #facc15; }
+
+    /* 심리 진단 출력 박스 */
+    .psychology-card {
+      background: rgba(0, 0, 0, 0.25);
+      border-left: 3px solid #fff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      width: 100%;
+      line-height: 1.7;
+      font-size: 0.92rem;
+      word-break: keep-all;
+    }
+
+    /* 슬라이더 컨트롤 */
+    .slider-group {
+      width: 100%;
+      margin-bottom: 28px;
+    }
+
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+
+    .slider-group input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .slider-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(0,0,0,0.15);
+      transition: transform 0.2s ease;
+    }
+
+    .slider-group input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    .labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 8px;
+    }
+
+    .temp-display {
+      font-size: 4.2rem;
+      font-weight: 200;
+      margin: 10px 0 25px 0;
+      letter-spacing: -2px;
+    }
+
+    /* 🔘 하단 버튼 영구 레이아웃 (이전 / 다음) */
+    .nav-btn-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .btn-prev {
+      padding: 14px 24px;
+      background: rgba(0, 0, 0, 0.2);
+      color: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 40px;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .btn-prev:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-color: #fff;
+    }
+
+    .btn-next, .btn-action {
+      flex: 1;
+      padding: 14px 30px;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 40px;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-next:hover, .btn-action:hover {
+      background: #fff;
+      color: #111;
+      font-weight: 600;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+    }
+
+    /* 티켓 카드 스타일 */
+    .ticket-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .ticket-card {
+      width: 100%;
+      padding: 40px 28px;
+      border-radius: 28px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      color: #111;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(15px);
+    }
+
+    .ticket-header {
+      font-size: 0.68rem;
+      letter-spacing: 3px;
+      color: #333;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
+      padding-bottom: 12px;
+      margin-bottom: 25px;
+      text-transform: uppercase;
+    }
+
+    .ticket-temp {
+      font-size: 3.8rem;
+      font-weight: 700;
+      color: #000;
+      letter-spacing: -1px;
+    }
+
+    .ticket-state {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 10px 0 12px 0;
+      color: #111;
+    }
+
+    .ticket-desc {
+      font-size: 0.88rem;
+      color: #222;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      word-break: keep-all;
+    }
+
+    .ticket-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.65);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-bottom: 25px;
+      color: #222;
+      border: 1px solid rgba(255,255,255,0.8);
+      text-align: left;
+    }
+
+    .ticket-footer {
+      font-size: 0.65rem;
+      color: #555;
+      letter-spacing: 2px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      padding-top: 15px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .btn-group button {
+      flex: 1;
+      font-size: 0.8rem;
+      padding: 12px 0;
+    }
+
+    @keyframes dynamicAmoeba {
+      0% { transform: translate(0, 0) rotate(0deg) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; filter: blur(4px); }
+      50% { transform: translate(60px, -60px) rotate(180deg) scale(1.2); border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; filter: blur(14px); }
+      100% { transform: translate(-40px, 40px) rotate(360deg) scale(0.9); border-radius: 30% 70% 40% 60% / 60% 30% 70% 40%; filter: blur(6px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="step-0-bg">
+
+  <div class="header-logo">
+    <a href="../example02/합의보관소.html">CONSENSUAL ARCHIVE</a>
+  </div>
+
+  <!-- STEP 0: Color Mixing 캔버스 -->
+  <div id="interactive-canvas-container">
+    <canvas id="mixCanvas"></canvas>
+    <div class="step-0-ui">
+      <div class="step-0-title">Color Mixing <br>Step 00</div>
+      <p class="step-0-desc">화면 안의 <b>입자(원)들</b>을 마우스로 끌어모으고, 클릭해보며<br><b>당신만의 감정 온도</b>를 혼합해보세요.</p>
+      <div class="mix-indicator" id="mixStatus"></div>
+      <button class="btn-next" onclick="finishColorMixing()">이 색상으로 관측 시작하기 →</button>
+    </div>
+  </div>
+
+  <!-- 레이어 요소 -->
+  <svg class="geometry-layer" id="geo-layer" width="100%" height="100%">
+    <polygon points="120,80 340,40 480,220 280,380 80,280" fill="none" stroke="rgba(0, 60, 80, 0.4)" stroke-width="1.5" stroke-dasharray="6,6" />
+    <polygon points="600,200 950,120 1100,450 800,600 550,400" fill="none" stroke="rgba(255, 255, 255, 0.6)" stroke-width="1.5" stroke-dasharray="5,5" />
+    <line x1="0" y1="30%" x2="100%" y2="70%" stroke="rgba(0, 60, 80, 0.25)" stroke-width="1.2" stroke-dasharray="8,8" />
+    <line x1="20%" y1="0" x2="80%" y2="100%" stroke="rgba(255, 255, 255, 0.4)" stroke-width="1.2" stroke-dasharray="4,4" />
+  </svg>
+
+  <div class="halftone-overlay"></div>
+
+  <div class="motion-bg-container" id="blob-layer">
+    <div class="cloud-blob blob-1"></div>
+    <div class="cloud-blob blob-2"></div>
+  </div>
+
+  <!-- 메인 단계 인터페이스 -->
+  <div class="generation-container">
+    
+    <!-- STEP 0.5-A: 나의 현재 날씨 선택 -->
+    <div class="step-box step-0-5a">
+      <div class="step-num">Inner Weather 01</div>
+      <h2 class="step-title">나의 마음 날씨 선택</h2>
+      <p class="step-sub">오늘 당신의 내면 상태를 가장 잘 닮아있는 날씨는 무엇인가요?</p>
+
+      <div class="weather-grid">
+        <button class="weather-btn selected" onclick="selectWeather(this, '맑은 날씨')">☀️ 맑은 날씨</button>
+        <button class="weather-btn" onclick="selectWeather(this, '흐린 날씨')">☁️ 흐린 날씨</button>
+        <button class="weather-btn" onclick="selectWeather(this, '비 내리는 날씨')">🌧️ 비 내리는 날씨</button>
+        <button class="weather-btn" onclick="selectWeather(this, '바람 부는 날씨')">💨 바람 부는 날씨</button>
+      </div>
+
+      <div class="nav-btn-row">
+        <button class="btn-prev" onclick="backToCanvas()">← 이전으로 돌아가기</button>
+        <button class="btn-next" onclick="goToWeatherQuestion()">다음 단계로 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 0.5-B: 날씨 질문 및 감정의 밑색 선택 -->
+    <div class="step-box step-0-5b">
+      <div class="step-num">Inner Weather 02</div>
+      <h2 class="step-title" id="weather-dynamic-question">
+        당신은 지금 이 날씨를 자책하며 밀어내고 있나요,<br>아니면 변화 중인 흐름으로 품어주고 있나요?
+      </h2>
+      <p style="font-size:0.85rem; margin-bottom:20px; opacity:0.85; text-align:center;">
+        당신이 내일의 삶에 품고 싶은 '날씨의 색'을 선택해주세요.
+      </p>
+
+      <div class="color-grid">
+        <div class="color-option selected" onclick="selectUndercolor(this, '물질적 안정')">
+          <div class="color-box box-gray"></div>
+          <span class="color-label">물질적 안정</span>
+        </div>
+        <div class="color-option" onclick="selectUndercolor(this, '역동적인 움직임')">
+          <div class="color-box box-orange"></div>
+          <span class="color-label">역동적인 움직임</span>
+        </div>
+        <div class="color-option" onclick="selectUndercolor(this, '거리감과 사색')">
+          <div class="color-box box-blue"></div>
+          <span class="color-label">거리감과 사색</span>
+        </div>
+        <div class="color-option" onclick="selectUndercolor(this, '다정한 연결')">
+          <div class="color-box box-yellow"></div>
+          <span class="color-label">다정한 연결</span>
+        </div>
+      </div>
+
+      <div class="nav-btn-row">
+        <button class="btn-prev" onclick="nextStep('0-5a')">← 이전 단계</button>
+        <button class="btn-next" onclick="analyzePsychology()">심리 상태 확인하기 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 0.5-C: 현재 심리적 상황 진단 피드백 -->
+    <div class="step-box step-0-5c">
+      <div class="step-num">Psychological Insight</div>
+      <h2 class="step-title">현재 당신의 심리 상태</h2>
+      <p class="step-sub">선택하신 날씨와 지향하는 밑색이 그리는 마음의 지도입니다.</p>
+
+      <div class="psychology-card" id="psychology-text">
+        <!-- 스크립트로 자동 생성 -->
+      </div>
+
+      <div class="nav-btn-row">
+        <button class="btn-prev" onclick="nextStep('0-5b')">← 이전 단계</button>
+        <button class="btn-next" onclick="nextStep(1)">사회적 기후 관측 시작하기 →</button>
+      </div>
+    </div>
+
+    <!-- 01단계: 사회적 기후 관측 -->
+    <div class="step-box step-1">
+      <div class="step-num">Observation 01</div>
+      <h2 class="step-title">사회적 기후 관측</h2>
+      <p class="step-sub">오늘 당신이 통과해 온 타인들과의 공기는 어떤 무게와 시야를 지니고 있었나요?</p>
+      
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>공기의 무게 (기압)</span>
+          <span id="density-val" style="opacity:0.7;">50%</span>
+        </div>
+        <input type="range" id="density" min="0" max="100" value="50" oninput="document.getElementById('density-val').innerText = this.value + '%'">
+        <div class="labels"><span>부유함 (자유)</span><span>침묵의 중량 (구속)</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>소통의 시야 (시정)</span>
+          <span id="visibility-val" style="opacity:0.7;">50%</span>
+        </div>
+        <input type="range" id="visibility" min="0" max="100" value="50" oninput="document.getElementById('visibility-val').innerText = this.value + '%'">
+        <div class="labels"><span>투명한 이해</span><span>불투명한 모호함</span></div>
+      </div>
+
+      <div class="nav-btn-row">
+        <button class="btn-prev" onclick="nextStep('0-5c')">← 이전 단계</button>
+        <button class="btn-next" onclick="nextStep(2)">온도 측정 단계로 →</button>
+      </div>
+    </div>
+
+    <!-- 02단계: 합의의 온도 -->
+    <div class="step-box step-2">
+      <div class="step-num">Thermostat 02</div>
+      <h2 class="step-title">합의의 임계 온도</h2>
+      <p class="step-sub">서로 다른 의견과 부딪힐 때, 당신의 마음이 상대를 향해 내어줄 수 있는 유연함의 온도를 설정하세요.</p>
+      
+      <div class="temp-display"><span id="temp-val">18.5</span>°C</div>
+      
+      <div class="slider-group">
+        <input type="range" id="temp-slider" min="-10" max="40" step="0.5" value="18.5" oninput="updateTemp(this.value)">
+        <div class="labels"><span>-10°C (경계와 고립)</span><span>40°C (적극적 열의)</span></div>
+      </div>
+
+      <div class="nav-btn-row">
+        <button class="btn-prev" onclick="nextStep(1)">← 이전 단계</button>
+        <button class="btn-next" onclick="generateTicket()">증명서 생성하기 ✦</button>
+      </div>
+    </div>
+
+    <!-- 03단계: 결과 티켓 -->
+    <div class="step-box step-3">
+      <div class="ticket-wrapper">
+        
+        <div class="ticket-card" id="ticket-to-capture">
+          <div class="ticket-header">Consensual Climate Archive Certificate</div>
+          <div class="ticket-temp" id="ticket-temp">18.5°C</div>
+          <div class="ticket-state" id="ticket-state">온화하고 미세한 바람</div>
+          <p class="ticket-desc" id="ticket-desc">관계 속에서 적절한 거리감을 유지하며 타인의 기후를 관조하는 상태입니다.</p>
+          
+          <div class="ticket-metrics">
+            <div>나의 날씨: <b id="metric-weather">맑은 날씨</b></div>
+            <div>감정 밑색: <b id="metric-color">물질적 안정</b></div>
+            <div>공기 기압: <b id="metric-density">50%</b></div>
+            <div>소통 시정: <b id="metric-visibility">50%</b></div>
+          </div>
+
+          <div class="ticket-footer">
+            ARCHIVE ID: #<span id="ticket-id">0000</span> | CONSENSUAL
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-prev" onclick="nextStep(2)">← 재설정하기</button>
+          <button class="btn-action" onclick="downloadTicket()">티켓 저장 (.PNG)</button>
+          <button class="btn-action" style="background:#fff; color:#111;" onclick="location.href='RESULT.html'">Result 메뉴로 이동 ➔</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  /* STEP 0 Canvas Script */
+  const canvas = document.getElementById('mixCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let width, height;
+  function resizeCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const palette = [
+    { r: 230, g: 240, b: 52 },
+    { r: 244, g: 63,  b: 94 },
+    { r: 49,  g: 230, b: 255 },
+    { r: 19,  g: 143, b: 158 },
+    { r: 236, g: 72,  b: 153 },
+    { r: 148, g: 163, b: 184 }
+  ];
+  const labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', '#', 'MЯY'];
+
+  const nodes = [];
+  const nodeCount = 32;
+
+  for (let i = 0; i < nodeCount; i++) {
+    const col = palette[Math.floor(Math.random() * palette.length)];
+    nodes.push({
+      x: Math.random() * (width * 0.8) + width * 0.1,
+      y: Math.random() * (height * 0.7) + height * 0.1,
+      radius: Math.random() * 24 + 12,
+      color: col,
+      label: labels[Math.floor(Math.random() * labels.length)],
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      isDragging: false
+    });
+  }
+
+  let draggedNode = null;
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function handleStart(e) {
+    const pos = getPos(e);
+    nodes.forEach(node => {
+      const dist = Math.hypot(node.x - pos.x, node.y - pos.y);
+      if (dist < node.radius + 20) {
+        draggedNode = node;
+        node.isDragging = true;
+        fillBackgroundColor(node.color);
+      }
+    });
+  }
+
+  function handleMove(e) {
+    if (!draggedNode) return;
+    const pos = getPos(e);
+    draggedNode.x = pos.x;
+    draggedNode.y = pos.y;
+    calculateColorMixing();
+  }
+
+  function handleEnd() {
+    if (draggedNode) {
+      draggedNode.isDragging = false;
+      draggedNode = null;
+    }
+  }
+
+  canvas.addEventListener('mousedown', handleStart);
+  canvas.addEventListener('mousemove', handleMove);
+  canvas.addEventListener('mouseup', handleEnd);
+  canvas.addEventListener('touchstart', handleStart, { passive: true });
+  canvas.addEventListener('touchmove', handleMove, { passive: true });
+  canvas.addEventListener('touchend', handleEnd);
+
+  function fillBackgroundColor(col) {
+    document.body.style.backgroundColor = `rgb(${col.r}, ${col.g}, ${col.b})`;
+    document.getElementById('mixStatus').innerText = 
+      `COLOR ABSORBED: RGB(${col.r}, ${col.g}, ${col.b})`;
+  }
+
+  function calculateColorMixing() {
+    const centerX = width / 2;
+    const centerY = height / 2;
+    let totalR = 0, totalG = 0, totalB = 0, activeCount = 0;
+
+    nodes.forEach(n => {
+      const dist = Math.hypot(n.x - centerX, n.y - centerY);
+      if (dist < 350) {
+        const weight = 1 - (dist / 350);
+        totalR += n.color.r * weight;
+        totalG += n.color.g * weight;
+        totalB += n.color.b * weight;
+        activeCount += weight;
+      }
+    });
+
+    if (activeCount > 0) {
+      const r = Math.round(totalR / activeCount);
+      const g = Math.round(totalG / activeCount);
+      const b = Math.round(totalB / activeCount);
+      document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+      document.getElementById('mixStatus').innerText = `MIXING CHROMATICS: RGB(${r}, ${g}, ${b})`;
+    }
+  }
+
+  function drawCanvas() {
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+        if (dist < 160) {
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = `rgba(15, 23, 42, ${0.22 - dist / 600})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    nodes.forEach(node => {
+      if (!node.isDragging) {
+        node.x += node.vx;
+        node.y += node.vy;
+
+        if (node.x < 30 || node.x > width - 30) node.vx *= -1;
+        if (node.y < 30 || node.y > height - 30) node.vy *= -1;
+      }
+
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgb(${node.color.r}, ${node.color.g}, ${node.color.b})`;
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      ctx.font = '10px JetBrains Mono';
+      ctx.fillStyle = '#0f172a';
+      ctx.fillText(node.label, node.x - node.radius - 8, node.y - node.radius - 4);
+    });
+
+    requestAnimationFrame(drawCanvas);
+  }
+  drawCanvas();
+
+  function finishColorMixing() {
+    document.getElementById('interactive-canvas-container').style.display = 'none';
+    document.getElementById('blob-layer').style.display = 'block';
+    nextStep('0-5a');
+  }
+
+  function backToCanvas() {
+    document.getElementById('interactive-canvas-container').style.display = 'block';
+    document.getElementById('blob-layer').style.display = 'none';
+    document.querySelectorAll('.step-box').forEach(box => box.classList.remove('active'));
+  }
+
+  /* 단계별 제어 및 상태 변수 */
+  let selectedWeatherLabel = "맑은 날씨";
+  let selectedColorLabel = "물질적 안정";
+
+  function selectWeather(element, label) {
+    document.querySelectorAll('.weather-btn').forEach(btn => btn.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedWeatherLabel = label;
+  }
+
+  function goToWeatherQuestion() {
+    const questionElem = document.getElementById('weather-dynamic-question');
+    questionElem.innerHTML = `당신은 지금 이 <b>[${selectedWeatherLabel}]</b>를 자책하며 밀어내고 있나요,<br>아니면 변화 중인 흐름으로 품어주고 있나요?`;
+    nextStep('0-5b');
+  }
+
+  function selectUndercolor(element, label) {
+    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedColorLabel = label;
+  }
+
+  function analyzePsychology() {
+    const container = document.getElementById('psychology-text');
+    let dynamicText = "";
+
+    dynamicText = `현재 당신의 내면은 <b>'${selectedWeatherLabel}'</b>의 상태를 통과하고 있습니다. `;
+    
+    if (selectedWeatherLabel.includes('흐린')) {
+      dynamicText += `감정이 명확히 정리되지 않은 채 모호한 안개 속을 걷는 듯한 정체감을 느끼고 있을 수 있습니다. `;
+    } else if (selectedWeatherLabel.includes('맑은')) {
+      dynamicText += `비교적 선명하고 긍정적인 에너지를 유지하고 계신 상태입니다. `;
+    } else if (selectedWeatherLabel.includes('비')) {
+      dynamicText += `치열했던 감정의 소란을 잠시 내려놓고, 지친 마음을 천천히 다독이며 가다듬는 중입니다. `;
+    } else {
+      dynamicText += `외부 자극으로 인해 마음의 일렁임이 많고 변화의 교차점에 서 계십니다. `;
+    }
+
+    dynamicText += `<br><br>그 속에서 당신이 지향하는 <b>'${selectedColorLabel}'</b>의 밑색은, `;
+
+    switch (selectedColorLabel) {
+      case '물질적 안정':
+        dynamicText += `불안정한 감정의 흐름을 단단한 현실적 기반과 균형감으로 지탱하고 싶어 하는 욕구를 나타냅니다.`;
+        break;
+      case '역동적인 움직임':
+        dynamicText += `정체된 상황을 털어내고 새로운 에너지와 열정으로 정면 돌파하려는 의지를 보여줍니다.`;
+        break;
+      case '거리감과 사색':
+        dynamicText += `외부와의 속도를 잠시 줄이고 자신만의 깊은 관조와 생각의 시간을 확보하려는 휴식의 신호입니다.`;
+        break;
+      case '다정한 연결':
+        dynamicText += `고립감을 극복하고 누군가와 온기를 나누며 따뜻하게 공존하고자 하는 감정적 연결을 갈망함을 뜻합니다.`;
+        break;
+    }
+
+    container.innerHTML = dynamicText;
+    nextStep('0-5c');
+  }
+
+  function nextStep(stepNumber) {
+    document.querySelectorAll('.step-box').forEach(box => box.classList.remove('active'));
+    const targetStep = document.querySelector('.step-' + stepNumber);
+    if (targetStep) targetStep.classList.add('active');
+  }
+
+  function updateTemp(val) {
+    document.getElementById('temp-val').innerText = parseFloat(val).toFixed(1);
+  }
+
+  function generateTicket() {
+    const density = parseInt(document.getElementById('density').value);
+    const visibility = parseInt(document.getElementById('visibility').value);
+    const temp = parseFloat(document.getElementById('temp-slider').value).toFixed(1);
+
+    let stateText = "", descText = "";
+
+    if (temp < 5) {
+      stateText = "차갑고 단단한 정적";
+      descText = "타인과의 경계를 명확히 규정하고 감정적 침범을 경계하며 선명한 논리를 우선시하는 기후입니다.";
+    } else if (temp <= 25) {
+      stateText = "온화하고 유연한 미풍";
+      descText = "사회적 관계 속에서 적절한 거리와 서서히 스며드는 대화의 온기를 지닌 상태입니다.";
+    } else {
+      stateText = "뜨겁고 열정적인 난류";
+      descText = "이견을 두려워하지 않고 깊숙이 개입하여 공동의 합의점을 도출해냅니다.";
+    }
+
+    document.getElementById('ticket-temp').innerText = `${temp}°C`;
+    document.getElementById('ticket-state').innerText = stateText;
+    document.getElementById('ticket-desc').innerText = descText;
+    document.getElementById('metric-weather').innerText = selectedWeatherLabel;
+    document.getElementById('metric-color').innerText = selectedColorLabel;
+    document.getElementById('metric-density').innerText = `${density}%`;
+    document.getElementById('metric-visibility').innerText = `${visibility}%`;
+    document.getElementById('ticket-id').innerText = Math.floor(1000 + Math.random() * 9000);
+
+    nextStep(3);
+  }
+
+  function downloadTicket() {
+    const ticket = document.getElementById('ticket-to-capture');
+    html2canvas(ticket, { scale: 2 }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `CONSENSUAL_CERTIFICATE_${Date.now()}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  }
+</script>
+
+  <!-- GSAP 라이브러리 및 스크립트 -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Flip.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, TextPlugin, Flip);
+      gsap.from("h1", {
+        y: 50,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power2.out"
+      });
+    });
+  </script>
+
+</body>
+</html>

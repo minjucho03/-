@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style/style.css">
+    <title>합의보관소</title>
+</head>
+<style>
+  @font-face {
+    font-family: 'Anthony';
+    /* GENERATION.html 위치 기준으로 Anthony 폰트 파일이 있는 상대 경로 */
+    src: url("./Anthony.woff2") format("woff2"),
+         url("./font/Anthony.woff2") format("woff2"),
+         url("../font/Anthony.woff2") format("woff2"),
+         url("./Anthony.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  /* 폰트 적용 대상 */
+  .step-0-title, .logo-text, .step-title, .ticket-temp {
+    font-family: 'Anthony', sans-serif !important;
+  }
+
+
+  /* --- [여백 수정] 로고 및 메인 텍스트 간격 조절 --- */
+  .main {
+    padding-top: 140px !important;
+    padding-bottom: 20px !important;
+  }
+  .main .logo-holder {
+    margin-bottom: 8px !important; /* 로고와 h1 사이의 간격을 줄임 */
+  }
+  .main h1 {
+    margin-top: 0 !important;
+    margin-bottom: 12px !important; /* h1과 화살표 이미지 사이의 간격 줄임 */
+    line-height: 1.1;
+  }
+ .site-footer {
+    background-color: #121212;
+    font-family: 'Pretendard';
+    color: #a0a0a0;
+    padding: 60px 40px 30px;
+    font-size: 14px;
+    line-height: 1.6;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 9999;
+  }
+  .footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .footer-brand h3 {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .footer-brand p {
+    margin: 0;
+    max-width: 320px;
+    font-size: 13px;
+    color: #888;
+  }
+  .footer-links {
+    display: flex;
+    gap: 60px;
+  }
+  .footer-column h4 {
+    color: #ffffff;
+    font-size: 14px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-column li {
+    margin-bottom: 10px;
+  }
+  .footer-column a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .footer-column a:hover {
+    color: #ffffff;
+  }
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 40px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #666;
+  }
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      gap: 30px;
+    }
+    .footer-links {
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+
+</style>
+
+<body>
+          <header style="width: 100%; position: relative; z-index: 9999; padding: 20px 0;">
+        <nav style="width: 100%;">
+            <ul class="link tree" style="display: flex !important; justify-content: space-between !important; align-items: center !important; list-style: none !important; padding: 0 80px !important; margin: 0 auto !important; width: 100% !important; max-width: 1400px !important; box-sizing: border-box !important;">
+                <li style="flex: 1; text-align: left; white-space: nowrap;"><a href="GENERATION.html" target="_blank">GENERATION</a></li>
+                <li style="flex: 1; text-align: center; white-space: nowrap;"><a href="RESULT.html" target="_blank">RESULT</a></li>
+                <li style="flex: 1; text-align: right; white-space: nowrap;"><a href="SPACE.html" target="_blank">SPACE</a></li>
+            </ul>
+        </nav>
+    </header>
+
+  
+
+<section class="background logo">
+<div class="group-1"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117.53 120" preserveAspectRatio="none"><path d="M7.04,28.17c4.75-8.89,11.48-15.82,20.22-20.79C35.99,2.42,46.03-.07,57.38-.07c14.41,0,26.52,3.85,36.34,11.54,9.82,7.69,16.15,18.14,18.99,31.35h-34.54c-2.07-4.36-4.94-7.69-8.59-9.99-3.66-2.29-7.89-3.44-12.69-3.44-7.42,0-13.34,2.65-17.76,7.94-4.42,5.29-6.63,12.36-6.63,21.2s2.21,16.07,6.63,21.36c4.42,5.29,10.34,7.94,17.76,7.94,4.8,0,9.03-1.15,12.69-3.44,3.66-2.29,6.52-5.62,8.59-9.99h34.54c-2.84,13.21-9.17,23.65-18.99,31.35-9.82,7.69-21.94,11.54-36.34,11.54-11.35,0-21.39-2.48-30.12-7.45-8.73-4.96-15.47-11.89-20.22-20.79C2.3,80.17-.08,70-.08,58.54s2.37-21.47,7.12-30.37Z" style="fill:#231f20;"/></svg>
+<div class="group-2"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129.88 120" preserveAspectRatio="none"><path d="M35.94,110.02c-9.06-5.07-16.23-12.11-21.53-21.12-5.29-9-7.94-19.18-7.94-30.53s2.64-21.53,7.94-30.53c5.29-9,12.47-16.01,21.53-21.03C45,1.79,54.93-.72,65.73-.72s20.87,2.51,29.87,7.53c9,5.02,16.12,12.03,21.36,21.03s7.86,19.18,7.86,30.53-2.62,21.53-7.86,30.53-12.39,16.04-21.44,21.12c-9.06,5.07-18.99,7.61-29.79,7.61s-20.74-2.54-29.79-7.61ZM85.13,79.82c4.75-5.35,7.12-12.49,7.12-21.44s-2.37-16.4-7.12-21.69c-4.75-5.29-11.21-7.94-19.4-7.94s-14.79,2.65-19.48,7.94c-4.69,5.29-7.04,12.52-7.04,21.69s2.35,16.23,7.04,21.53c4.69,5.29,11.19,7.94,19.48,7.94s14.65-2.67,19.4-8.02Z" style="fill:#231f20;"/></svg>
+<div class="group-3"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124.24 120"preserveAspectRatio="none"><path d="M116.24,116.48h-32.08L41.43,51.99v64.5H9.35V1.08h32.08l42.72,65.31V1.08h32.08v115.4Z" style="fill:#231f20;"/></svg>
+<div class="group-4"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100.52 120" preserveAspectRatio="none"><path d="M20.81,108.05c-8.62-6.38-13.26-15.52-13.91-27.42h34.21c.33,4.04,1.53,6.99,3.6,8.84,2.07,1.86,4.75,2.78,8.02,2.78,2.95,0,5.37-.74,7.29-2.21,1.91-1.47,2.86-3.52,2.86-6.14,0-3.38-1.58-6-4.75-7.86-3.17-1.85-8.29-3.93-15.39-6.22-7.53-2.51-13.61-4.94-18.25-7.28-4.64-2.35-8.68-5.78-12.11-10.31-3.44-4.53-5.16-10.45-5.16-17.76s1.85-13.78,5.57-19.07c3.71-5.29,8.84-9.3,15.39-12.03C34.73.65,42.15-.72,50.44-.72c13.42,0,24.14,3.14,32.17,9.41,8.02,6.28,12.3,15.09,12.85,26.44h-34.87c-.11-3.49-1.17-6.11-3.19-7.86-2.02-1.74-4.61-2.62-7.78-2.62-2.4,0-4.37.71-5.89,2.13-1.53,1.42-2.29,3.44-2.29,6.06,0,2.18.84,4.07,2.54,5.65,1.69,1.58,3.79,2.95,6.3,4.09,2.51,1.15,6.22,2.59,11.13,4.34,7.31,2.51,13.34,4.99,18.09,7.45s8.84,5.89,12.28,10.31c3.44,4.42,5.16,10.01,5.16,16.78s-1.72,13.04-5.16,18.5c-3.44,5.46-8.4,9.77-14.9,12.93-6.49,3.17-14.16,4.75-23,4.75-13.42,0-24.45-3.19-33.07-9.58Z" style="fill:#231f20;"/></svg>
+<div class="group-5"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91.48 120" preserveAspectRatio="none"><path d="M43.39,26.78v18.82h36.83v24.39h-36.83v20.79h41.74v25.7H11.31V1.08h73.83v25.7h-41.74Z" style="fill:#231f20;"/></svg>
+<div class="group-6"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124.24 120" preserveAspectRatio="none"><path d="M116.42,116.48h-32.08L41.61,51.99v64.5H9.53V1.08h32.08l42.72,65.31V1.08h32.08v115.4Z" style="fill:#231f20;"/></svg>
+<div class="group-7"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 101.65 120" preserveAspectRatio="none"><path d="M21,108.05c-8.62-6.38-13.26-15.52-13.91-27.42h34.21c.33,4.04,1.53,6.99,3.6,8.84,2.07,1.86,4.75,2.78,8.02,2.78,2.95,0,5.37-.74,7.29-2.21,1.91-1.47,2.86-3.52,2.86-6.14,0-3.38-1.58-6-4.75-7.86-3.17-1.85-8.29-3.93-15.39-6.22-7.53-2.51-13.61-4.94-18.25-7.28-4.64-2.35-8.68-5.78-12.11-10.31-3.44-4.53-5.16-10.45-5.16-17.76s1.85-13.78,5.57-19.07c3.71-5.29,8.84-9.3,15.39-12.03C34.91.65,42.33-.72,50.63-.72c13.42,0,24.14,3.14,32.17,9.41,8.02,6.28,12.3,15.09,12.85,26.44h-34.87c-.11-3.49-1.17-6.11-3.19-7.86-2.02-1.74-4.61-2.62-7.78-2.62-2.4,0-4.37.71-5.89,2.13-1.53,1.42-2.29,3.44-2.29,6.06,0,2.18.84,4.07,2.54,5.65,1.69,1.58,3.79,2.95,6.3,4.09,2.51,1.15,6.22,2.59,11.13,4.34,7.31,2.51,13.34,4.99,18.09,7.45s8.84,5.89,12.28,10.31c3.44,4.42,5.16,10.01,5.16,16.78s-1.72,13.04-5.16,18.5c-3.44,5.46-8.4,9.77-14.9,12.93-6.49,3.17-14.16,4.75-23,4.75-13.42,0-24.45-3.19-33.07-9.58Z" style="fill:#231f20;"/></svg>
+<div class="group-8"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 114.07 120"preserveAspectRatio="none"><path d="M41.79,1.08v66.95c0,6.22,1.44,11.02,4.34,14.41,2.89,3.38,7.28,5.07,13.18,5.07s10.34-1.72,13.34-5.16c3-3.44,4.5-8.21,4.5-14.32V1.08h32.08v66.95c0,10.59-2.24,19.62-6.71,27.09-4.48,7.48-10.56,13.1-18.25,16.86-7.69,3.76-16.23,5.65-25.62,5.65s-17.76-1.88-25.13-5.65c-7.37-3.77-13.15-9.36-17.35-16.78-4.2-7.42-6.3-16.48-6.3-27.17V1.08h31.92Z" style="fill:#231f20;"/></svg>
+<div class="group-9"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128.75 120"preserveAspectRatio="none"><path d="M85.85,97.66h-40.92l-6.22,18.82H4.99L47.05,1.08h37l41.91,115.4h-33.88l-6.22-18.82ZM77.83,73.11l-12.44-37.32-12.28,37.32h24.72Z" style="fill:#231f20;"/></svg>
+<div class="group-10"></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75.6 120" preserveAspectRatio="none"><path d="M39.76,91.93h35.85v24.55H7.68V1.08h32.08v90.85Z" style="fill:#231f20;"/></svg>
+</section>
+
+    <div class="background drawing" style="mix-blend-mode: differnece";>
+<svg width="1116" height="1205" viewBox="0 0 1116 1205" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M1094.72 17.6637L17.6637 1183.92L20.5987 1186.63L1097.66 20.3742L1094.72 17.6637Z" stroke="black" stroke-width="25" pathLength="1"/>
+</svg>
+</div>
+
+
+    <div class="background drawing">
+<svg width="1355" height="1464" viewBox="0 0 1355 1464" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M1333.72 1445.42L17.6637 20.3744L20.5987 17.6638L1336.66 1442.71L1333.72 1445.42Z" stroke="black" stroke-width="25" pathLength="1"/>
+</svg>
+</div>
+
+
+
+
+
+
+
+
+    <script src="./js/script.js"></script>
+
+<section class="main">
+    <div class="logo-holder">
+        <img src="./asset/logo.svg" alt="합의보관소 로고2"/>
+        </div>
+    <h1>합의보관소</h1>
+    <img src="./화살표.svg"
+    <div class="door-line"></div>
+</section>
+<section class="contents">
+<img src="./asset/Group.svg"
+    <h5><p>우리는 같은 공기에서 다른 날씨를 산다. 우리는 서로의 날씨를 알고 살아가고 있는가? <br>우리가 살아가는 사회의 기후에 대하여</p></br></p></h5>
+    </section>
+
+    <section class="weather-section">
+        <div class="circle circle-1" data-speed="2"></div>
+        <div class="circle circle-2" data-speed="-4"></div>
+        <div class="circle circle-3" data-speed="5"></div>
+        <div class="circle circle-4" data-speed="-3"></div>
+        <div class="circle circle-5" data-speed="4"></div>
+        <div class="circle circle-6" data-speed="-5"></div>
+
+        <div class="content">
+        <h2 class="title">
+            <span>무겁다</span>
+            <span>흐리다</span>
+            <span>빠르다</span>
+            <span>정체되다</span>
+            </h2>
+        <p class="subtitle">오늘,당신의 하늘은 어떤가요?</p>
+        <a href="GENERATION.html" class="btn-generation">GENERATION</a>
+       </div>
+    </section>
+<!-- === [신규 섹션] 사회적 기후와 감각에 대한 기록 (책 참고) === -->
+<style>
+    .archival-insight,
+  .archival-insight * {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 
+  }
+
+  .archival-insight {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    padding: 120px 40px;
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid rgba(19, 17, 17, 0.08);
+  }
+
+  .insight-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: 'Pretendard', sans-serif;
+  }
+
+  .insight-header {
+    margin-bottom: 60px;
+  }
+
+  .insight-header .tag {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #888;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .insight-header h2 {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #ffffff;
+    word-break: keep-all;
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 80px;
+  }
+
+  .insight-card h3 {
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 16px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+
+  .insight-card p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #a0a0a0;
+    word-break: keep-all;
+  }
+
+  .insight-quote {
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid #888;
+    padding: 40px;
+    margin-top: 40px;
+  }
+
+  .insight-quote p {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #d1d1d1;
+    font-style: italic;
+    margin-bottom: 16px;
+    word-break: keep-all;
+  }
+
+  .insight-quote cite {
+    font-size: 13px;
+    color: #666;
+    font-style: normal;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .archival-insight {
+      padding: 80px 20px;
+    }
+    .insight-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .insight-header h2 {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<section class="archival-insight">
+  <div class="insight-container">
+    <div class="insight-header">
+      <span class="tag">ARCHIVE INSIGHT — WEATHER BETWEEN US</span>
+      <h2>우리는 왜 서로의 날씨를 보지 못한 채<br>같은 하늘 아래서 엇갈리는가</h2>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <h3>가시화된 기준, 비가시화된 인간</h3>
+        <p>
+          ‘얼마나 속도를 냈는가’, ‘어떤 성과를 거두었는가’라는 수치화된 기압계 속에서 개인의 삶은 점수와 비율(%)로 번역됩니다. 
+          결과만을 빠르게 증명해야 하는 사회적 기후 속에서, 우리는 타인의 감각이나 내면의 온도를 읽어낼 여유를 잃어버렸습니다.
+          모두가 같은 규격의 속도로 보행하며 발밑의 수치만 살필 뿐, 서로의 표정에 드리운 안개와 그늘을 지나쳐갑니다.
+        </p>
+      </div>
+
+      <div class="insight-card">
+        <h3>망설임과 머무름이 사라진 계절</h3>
+        <p>
+          빠른 결론을 강요받는 구조 속에서 머뭇거림은 뒤처짐으로, 불완전함은 무가치함으로 비판받곤 합니다.
+          그러나 관계와 내면의 깊이는 단숨에 판정되는 결과가 아니라, 조심스럽게 머무르는 시간 속에서 형성됩니다.
+          쉽게 단정 짓지 않고 상대를 다정하게 들여다보는 ‘망설임’의 능력을 회복할 때 비로소 타인의 날씨가 비치기 시작합니다.
+          또한 개인의 날씨에서도 망설임과 머무름의 시간을 더 깊게 들여다봄으로써 개인의 날씨에 대해 더 고민하고 그 고민을 통해 개인의 날씨가 단순히
+          지나가는 감정이 아니라, 자신을 이해하고 타인과 연결되는 중요한 의미로 확장될 수 있습니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="insight-quote">
+      <p>
+        "맑음은 조건이나 결과로 갑자기 주어지는 것이 아니라, 불완전함 속에서도 서로의 결을 들여다보고 견뎌내는 과정 속에서 형성된다. 우리는 서로에게 하나의 기후이자, 머물 수 있는 날씨가 되어줄 수 있는가.
+      </p>
+      <cite>— 도서 『사이의 날씨 (Weather Between Us)』 기록 중</cite>
+    </div>
+  </div>
+</section>
+
+    <!-- --- [추가] 세련된 하단 푸터 --- -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>합의보관소</h3>
+                <p>Consensual Archive Project.<br>우리가 공유하는 사회적 기후와 날씨에 대한 기록.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>NAVIGATION</h4>
+                    <ul>
+                        <li><a href="GENERATION.html" target="_blank">GENERATION</a></li>
+                        <li><a href="index 2.html" target="_blank">RESULT</a></li>
+                        <li><a href="SPACE.html" target="_blank">SPACE</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>SOCIAL</h4>
+                    <ul>
+                        <li><a href="#" target="_blank">Instagram</a></li>
+                        <li><a href="#" target="_blank">Archive</a></li>
+                        <li><a href="#" target="_blank">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 합의보관소. All rights reserved.</span>
+            <span>Privacy Policy &nbsp;|&nbsp; Terms of Service</span>
+        </div>
+    </footer>
+
+    <!-- JS 스크립트 -->
+    <script src="./js/script.js"></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const section = document.querySelector('.weather-section');
+        const circles = document.querySelectorAll('.circle');
+
+        if (!section) return;
+
+        section.addEventListener('mousemove', (e) => {
+          const rect = section.getBoundingClientRect();
+          const xPos = e.clientX - rect.left - rect.width / 2;
+          const yPos = e.clientY - rect.top - rect.height / 2;
+
+          circles.forEach((circle) => {
+            const speed = parseFloat(circle.getAttribute('data-speed')) || 2;
+            const moveX = xPos * (speed / 50);
+            const moveY = yPos * (speed / 50);
+
+            circle.style.transform = 'translate(' + moveX + 'px, ' + moveY + 'px)';
+          });
+        });
+
+        section.addEventListener('mouseleave', () => {
+          circles.forEach((circle) => {
+            circle.style.transform = 'translate(0px, 0px)';
+          });
+        });
+      });
+    </script>
+    
+    <!-- GSAP 라이브러리 및 플러그인 -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Flip.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, TextPlugin, Flip);
+
+        gsap.from("h1", {
+          y: 50,
+          opacity: 0,
+          duration: 1.2,
+          ease: "power2.out"
+        });
+      });
+    </script>
+</body>
+</html>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const section = document.querySelector('.weather-section');
+    const circles = document.querySelectorAll('.circle');
+
+    if (!section) return;
+
+    section.addEventListener('mousemove', (e) => {
+      const rect = section.getBoundingClientRect();
+      const xPos = e.clientX - rect.left - rect.width / 2;
+      const yPos = e.clientY - rect.top - rect.height / 2;
+
+      circles.forEach((circle) => {
+        const speed = parseFloat(circle.getAttribute('data-speed')) || 2;
+        const moveX = xPos * (speed / 50);
+        const moveY = yPos * (speed / 50);
+
+        circle.style.transform = 'translate(' + moveX + 'px, ' + moveY + 'px)';
+      });
+    });
+
+    section.addEventListener('mouseleave', () => {
+      circles.forEach((circle) => {
+        circle.style.transform = 'translate(0px, 0px)';
+      });
+    });
+  });
+  
+</script>
+  <!-- 1. GSAP 메인 라이브러리 및 주요 무료 플러그인 불러오기 -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Flip.min.js"></script>
+
+  <!-- 2. GSAP 실행 스크립트 -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 플러그인 등록
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, TextPlugin, Flip);
+
+      // ----------------------------------------------------
+      // 🎯 [테스트 1] 화면의 모든 h1 태그를 아래에서 위로 띄우며 등장
+      // ----------------------------------------------------
+      gsap.from("h1", {
+        y: 50,          // 아래로 50px 내려간 상태에서 시작
+        opacity: 0,     // 투명한 상태에서 시작
+        duration: 1.2,  // 1.2초 동안 실행
+        ease: "power2.out"
+      });
+
+      // ----------------------------------------------------
+      // 🎯 [테스트 2] 원하는 클래스명으로 애니메이션 걸기 (예: .box)
+      // (HTML에 <div class="box"></div> 가 있다면 동작합니다)
+      // ----------------------------------------------------
+      /*
+      gsap.to(".box", {
+        x: 200,         // 오른쪽으로 200px 이동
+        rotation: 360,  // 360도 회전
+        duration: 2,
+        scrollTrigger: {
+          trigger: ".box", // 스크롤 시 이 요소를 만나면 실행
+          start: "top 80%"
+        }
+      });
+      */
+    });
+  </script>
+  <body class="Sunny">
+  <section class="poster background Sunny">
+    <div class="sun-circle">
+</body>
+
+</html>
